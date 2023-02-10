@@ -95,15 +95,18 @@ def get_value():
             
             hash_prefix = base64.b64encode(prefix.encode('utf-8')).decode('utf-8')
             hash_index = base64.b64encode(str(index).encode('utf-8')).decode('utf-8')
+            
+            link = ""
+            if number_special :
+                link = e_link + "/?EVENT_RANDOM="
+            else :
+                link = e_link + "/?n="
 
-        
-
-            link = e_link + "/?n="
 
             a = hash_prefix.replace('=','ntd')
             b = hash_index.replace('=','nhn')
 
-            code = link + b + 'NTD' + a 
+            # code = link + b + 'NTD' + a 
 
             encode_number = b + 'NTD' + a
 
@@ -121,9 +124,10 @@ def get_value():
 
                 four = str(summ)[0:2]
 
-                ms =  first + third + four + number_special    # 2 + 4 + 2 + 9999
+                ms =   third + first + four + number_special    # 4 + 2 + 2 + 9999
 
-                qr_code_ = link  + ms
+                qr_code_ = link  + third + first + four + number_special 
+
 
             else :
                 second = str(qrMs)[4:8] # 4
@@ -199,7 +203,11 @@ def get_value():
             hash_prefix = base64.b64encode(prefix.encode('utf-8')).decode('utf-8')
             hash_index = base64.b64encode(str(index).encode('utf-8')).decode('utf-8')
 
-            link = e_link + "/?n="
+            link = ""
+            if number_special :
+                link = e_link + "/?EVENT_RANDOM="
+            else :
+                link = e_link + "/?n="
         
 
             a = hash_prefix.replace('=','ntd')
@@ -223,9 +231,11 @@ def get_value():
 
                 four = str(summ)[0:2]
 
-                ms =  first + third + four + number_special    # 2 + 4 + 2 + 9999
+                # ms =  third + first + four + number_special    # 4 + 2 + 2 + 9999
+                ms =   third + first + four + number_special    # 4 + 2 + 2 + 9999
 
-                qr_code_ = link  + ms
+
+                qr_code_ = link  + third + first + four + number_special 
             else:
 
 
@@ -238,14 +248,13 @@ def get_value():
 
                 four = str(summ)[0:2]
 
-
                 ms =  second + first + third + four
                 qr_code_ = link  + ms
 
 
 
             qrData.append(qr_code_)
-            msData.append(ms)
+            msData.append(str(ms))
 
 
         with open("QR.csv", 'w',newline='') as csvfile: 

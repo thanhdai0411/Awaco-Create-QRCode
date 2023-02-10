@@ -95,9 +95,7 @@ for index in range(int(number_qr)) :
 
     print('=============================')
     
-
-
-
+    
     msData.append(ms)
     qrData.append(code)
 
