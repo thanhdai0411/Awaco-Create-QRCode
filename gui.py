@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+import requests
 
 from time import sleep
 import sys
@@ -19,7 +20,7 @@ import csv
 import pyqrcode
 import png
 from pyqrcode import QRCode
-from PIL import Image
+from PIL import Image, ImageTk
 
 document = Document()
 p = document.add_paragraph()
@@ -47,8 +48,15 @@ msData = []
 
 win= Tk()
 win.title('Generate QRCode by NTĐ')
-win.geometry("330x220")
+win.geometry("335x255") # x , y
 win.resizable(0,0)
+
+url = "https://res.cloudinary.com/image-awaco/image/upload/v1675994608/utils/icon_app_l7g7ii.png"
+
+im = Image.open(requests.get(url, stream=True).raw)
+
+photo = ImageTk.PhotoImage(im)
+win.wm_iconphoto(False, photo)
 
 
 
@@ -57,17 +65,19 @@ def get_value():
     prefix = entry_prefix.get()
     code_prefix = entry_code_prefix.get()
     number_qr = entry_number.get()
+    number_special = code_special.get()
     e_link = entry_link.get()
     type_export = variable.get()
 
+    # print(number_special)
+    # return
 
     print(type_export)
     ask = messagebox.askquestion('QR Code', 'Bạn chắc chắn tạo mã với tiền tố ' + prefix + ' số lương ' + number_qr + ' link khi quét bằng Camera thường ' + e_link + ' in thành file ' + type_export)
     if(ask =='no'):
-        return ;
-
-        
-   
+        return 
+    
+    
 
     if(type_export == "WORD-PNG") :
 
@@ -78,6 +88,8 @@ def get_value():
         parent_dir = currentFolder
         path = os.path.join(parent_dir, directory)
         os.mkdir(path)
+
+        
 
         for index in range(int(number_qr)) :
             
@@ -99,27 +111,38 @@ def get_value():
 
             qrMs = int.from_bytes(mybytes, 'big')
 
+            if number_special :
+                
+                first = str(code_prefix) # 2
 
-            second = str(qrMs)[4:8] # 4
-            first = str(code_prefix) # 2
-            third = str(qrMs)[-5:-1] # 4
+                third = str(qrMs)[-5:-1] # 4
 
-            summ = int(first) + int(second)  + int(third)
+                summ = int(first) * int(third)
+
+                four = str(summ)[0:2]
+
+                ms =  first + third + four + number_special    # 2 + 4 + 2 + 9999
+
+                qr_code_ = link  + ms
+
+            else :
+                second = str(qrMs)[4:8] # 4
+                first = str(code_prefix) # 2
+                third = str(qrMs)[-5:-1] # 4
+
+                summ = int(first) + int(second)  + int(third)
 
 
-            four = str(summ)[0:2]
+                four = str(summ)[0:2]
 
 
-            ms =  second + first + third + four
-            qr_code_ = link  + ms
+                ms =  second + first + third + four
+                qr_code_ = link  + ms
 
 
 
             qrData.append(qr_code_)
             msData.append(ms)
-
-
-
 
 
         for qr in qrData:
@@ -145,8 +168,13 @@ def get_value():
             # print(qrCodeImg.size[0],qrCodeImg.size[0] )
 
             
-            urllib.request.urlretrieve("https://res.cloudinary.com/image-awaco/image/upload/v1659334918/qr_code/khung_v1_x4xlng.png","khung.png")
-            khung = Image.open("khung.png")
+            # urllib.request.urlretrieve("https://res.cloudinary.com/image-awaco/image/upload/v1659334918/qr_code/khung_v1_x4xlng.png","khung.png")
+            # khung = Image.open("khung.png")
+
+                        
+            url = "https://res.cloudinary.com/image-awaco/image/upload/v1659334918/qr_code/khung_v1_x4xlng.png"
+
+            khung = Image.open(requests.get(url, stream=True).raw)
 
             back_im = khung.copy()
 
@@ -185,19 +213,34 @@ def get_value():
 
             qrMs = int.from_bytes(mybytes, 'big')
 
+            if number_special :
+                
+                first = str(code_prefix) # 2
 
-            second = str(qrMs)[4:8] # 4
-            first = str(code_prefix) # 2
-            third = str(qrMs)[-5:-1] # 4
+                third = str(qrMs)[-5:-1] # 4
 
-            summ = int(first) + int(second)  + int(third)
+                summ = int(first) * int(third)
+
+                four = str(summ)[0:2]
+
+                ms =  first + third + four + number_special    # 2 + 4 + 2 + 9999
+
+                qr_code_ = link  + ms
+            else:
 
 
-            four = str(summ)[0:2]
+                second = str(qrMs)[4:8] # 4
+                first = str(code_prefix) # 2
+                third = str(qrMs)[-5:-1] # 4
+
+                summ = int(first) + int(second)  + int(third)
 
 
-            ms =  second + first + third + four
-            qr_code_ = link  + ms
+                four = str(summ)[0:2]
+
+
+                ms =  second + first + third + four
+                qr_code_ = link  + ms
 
 
 
@@ -213,8 +256,6 @@ def get_value():
             for index in range(len(qrData)):
                 # for index in range(len(msData)):
                 csvwriter.writerow([index+1,qrData[index], "'" + str(msData[index])]) 
-
-
 
     print(' >>>> Generate QR code success!')
     Label(win, text="Generate success!", font= ('Arial', 10),fg='#f00').grid(row = 5, column = 0, pady = 5, padx = 5)
@@ -246,33 +287,41 @@ entry_number= ttk.Entry(win,font=('Arial', 10),width=25)
 entry_number.grid(row = 2, column = 1, pady = 5)
 
 
+# 4 number special
+l2 = Label(win, text="Mã đặc biệt", font= ('Arial', 13))
+l2.grid(row = 3, column = 0, pady = 5, padx = 5)
+
+code_special= ttk.Entry(win,font=('Arial', 10),width=25)
+code_special.grid(row = 3, column = 1, pady = 5)
+
+
 # link redirect
 l3 = Label(win, text="Nhập liên kết", font= ('Arial', 13))
-l3.grid(row = 3, column = 0, pady = 5, padx = 5)
+l3.grid(row = 4, column = 0, pady = 5, padx = 5)
 
 v = StringVar(win)
 v.set("https://app.awaco.vn")
 
 entry_link= ttk.Entry(win,font=('Arial', 10),width=25, textvariable=v)
-entry_link.grid(row = 3, column = 1, pady = 5)
+entry_link.grid(row = 4, column = 1, pady = 5)
 
 # choose type export
 
 l4 = Label(win, text="Chọn loại file", font= ('Arial', 13))
-l4.grid(row = 4, column = 0, pady = 5, padx = 5)
+l4.grid(row = 5, column = 0, pady = 5, padx = 5)
 
 variable = StringVar(win)
 variable.set("CSV") 
 
 type_ = OptionMenu(win, variable , "WORD-PNG", "CSV")
-type_.grid(row = 4, column = 1, pady = 5)
+type_.grid(row = 5, column = 1, pady = 5)
 
 # entry_type= ttk.Entry(win,font=('Arial', 10),width=10, textvariable=variable)
 # entry_type.grid(row = 3, column = 1, pady = 5)
 
 # button
 button= ttk.Button(win, text="Xác nhận", command= get_value)
-button.grid(row = 5, column = 1, pady = 5)
+button.grid(row = 6, column = 1, pady = 5)
 
 
 
