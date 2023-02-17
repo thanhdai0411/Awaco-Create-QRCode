@@ -51,12 +51,12 @@ win.title('Generate QRCode by NTĐ')
 win.geometry("335x255") # x , y
 win.resizable(0,0)
 
-url = "https://res.cloudinary.com/image-awaco/image/upload/v1675994608/utils/icon_app_l7g7ii.png"
+# url = "https://res.cloudinary.com/image-awaco/image/upload/v1675994608/utils/icon_app_l7g7ii.png"
 
-im = Image.open(requests.get(url, stream=True).raw)
+# im = Image.open(requests.get(url, stream=True).raw)
 
-photo = ImageTk.PhotoImage(im)
-win.wm_iconphoto(False, photo)
+# photo = ImageTk.PhotoImage(im)
+# win.wm_iconphoto(False, photo)
 
 
 
@@ -171,14 +171,16 @@ def get_value():
             qrCodeImg = qrCodeImg.convert("RGBA")
             # print(qrCodeImg.size[0],qrCodeImg.size[0] )
 
-            
+            # print('123123')
             # urllib.request.urlretrieve("https://res.cloudinary.com/image-awaco/image/upload/v1659334918/qr_code/khung_v1_x4xlng.png","khung.png")
+            # khung = Image.open("D:\Workspace\CT\AppGenerateQR\img\khung_v1.png")
             # khung = Image.open("khung.png")
 
-                        
+            
             url = "https://res.cloudinary.com/image-awaco/image/upload/v1659334918/qr_code/khung_v1_x4xlng.png"
-
             khung = Image.open(requests.get(url, stream=True).raw)
+
+
 
             back_im = khung.copy()
 
@@ -257,7 +259,7 @@ def get_value():
             msData.append(str(ms))
 
 
-        with open("QR.csv", 'w',newline='') as csvfile: 
+        with open(prefix+".csv", 'w',newline='') as csvfile: 
             csvwriter = csv.writer(csvfile,delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL) 
                 
             csvwriter.writerow(["STT", "QR_CODE", "MS"]) 
@@ -271,8 +273,6 @@ def get_value():
     messagebox.showinfo('Thành công', 'Bạn đã tạo thành công ' + number_qr + ' mã QR code')
 
 
-
-    
 
 # prefix
 l1=Label(win, text="Nhập tiền tố", font= ('Arial', 13))
@@ -331,8 +331,6 @@ type_.grid(row = 5, column = 1, pady = 5)
 # button
 button= ttk.Button(win, text="Xác nhận", command= get_value)
 button.grid(row = 6, column = 1, pady = 5)
-
-
 
 
 
